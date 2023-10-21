@@ -21,6 +21,7 @@ public class SpaceshipMainframe : MonoBehaviour
     public BasicPart Engine;
     [Header("Controll")]
     public BasicPart ControllRoom;
+    public int EvasionChance;
 
     private IEnumerator Restore_Shield()
     {
@@ -48,38 +49,55 @@ public class SpaceshipMainframe : MonoBehaviour
         }
     }
 
+    private void UpdateEvasion()
+    {
+        EvasionChance = (ControllRoom.UsingEnergy + Engine.UsingEnergy);
+    }
+
     public void TakeDamage(BasicPart part)
     {
-        if (ProtLayers > 0)
+        if (EvasionChance > 0)
         {
-            LayersInCooldown++;
-            ProtLayers--;
-            StartCoroutine(Restore_Shield());
-        }
-        else
-        {
-            if (part.gameObject.name == "Shields")
+            if (Random.Range(0, 10) == EvasionChance)
             {
-                part.HP -= 2;
-                if (part.MaxEnergy >= 2)
-                {
-                    part.MaxEnergy -= 2;
-                    
-                    if (part.UsingEnergy >= 2)
-                    {
-                        part.UsingEnergy -= 2;
-                        energy.FreePoints += 2;
-                    }
-                }
+                Debug.Log("Evaded!");
+                return;
             }
             else
             {
-                part.HP -= 2;
+                if (ProtLayers > 0)
+                {
+                    LayersInCooldown++;
+                    ProtLayers--;
+                    StartCoroutine(Restore_Shield());
+                }
+                else
+                {
+                    if (part.gameObject.name == "Shields")
+                    {
+                        part.HP -= 2;
+                        if (part.MaxEnergy >= 2)
+                        {
+                            part.MaxEnergy -= 2;
+
+                            if (part.UsingEnergy >= 2)
+                            {
+                                part.UsingEnergy -= 2;
+                                energy.FreePoints += 2;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        part.HP -= 2;
+                    }
+                }
             }
         }
     }
     public void Update()
     {
+        UpdateEvasion();
         UpdateHull();
         UpdateShields();
     }
