@@ -8,11 +8,13 @@ public class SpaceshipMainframe : MonoBehaviour
     public int Hull;
     private int Sum;
     public BasicPart[] parts;
+    public EnergyStorage energy;
     [Header("Weaponary")]
     public BasicPart Weaponary;
     [Header("Shield")]
     public BasicPart Shields;
     public int ProtLayers;
+    private int LayersInCooldown;
     public bool Is_protected;
     public int ShieldTimeOut;
     [Header("Engine")]
@@ -24,6 +26,7 @@ public class SpaceshipMainframe : MonoBehaviour
     {
         yield return new WaitForSeconds(4);
         ProtLayers++;
+        LayersInCooldown--;
     }
 
     private void UpdateHull()
@@ -39,30 +42,33 @@ public class SpaceshipMainframe : MonoBehaviour
     private void UpdateShields()
     {
         
-        if (Shields.UsingEnergy % 2 == 0)
+        if (Shields.UsingEnergy % 2 == 0 || Shields.HP<=0)
         {
-            ProtLayers = Shields.UsingEnergy / 2;
+            ProtLayers = (Shields.UsingEnergy / 2) - LayersInCooldown;
         }
     }
 
     public void TakeDamage(BasicPart part)
     {
-        if (ProtLayers != 0)
+        if (ProtLayers > 0)
         {
+            LayersInCooldown++;
             ProtLayers--;
             StartCoroutine(Restore_Shield());
         }
         else
         {
-            if (part.name == "Shields")
+            if (part.gameObject.name == "Shields")
             {
                 part.HP -= 2;
-                if (part.MaxEnergy > 0)
+                if (part.MaxEnergy >= 2)
                 {
                     part.MaxEnergy -= 2;
+                    
                     if (part.UsingEnergy >= 2)
                     {
                         part.UsingEnergy -= 2;
+                        energy.FreePoints += 2;
                     }
                 }
             }
@@ -72,7 +78,7 @@ public class SpaceshipMainframe : MonoBehaviour
             }
         }
     }
-    public void FixedUpdate()
+    public void Update()
     {
         UpdateHull();
         UpdateShields();
