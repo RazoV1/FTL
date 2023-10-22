@@ -88,7 +88,7 @@ public class SpaceshipMainframe : MonoBehaviour
 
     }
     #endregion
-    public void TakeDamage(BasicPart part)
+    public void TakeDamage(BasicPart part,bool through_shields,int damage)
     {
         if (Random.Range(1, 11) == EvasionChance)
         {
@@ -97,7 +97,7 @@ public class SpaceshipMainframe : MonoBehaviour
         }
         else
         {
-            if (ProtLayers > 0)
+            if (ProtLayers > 0 && !through_shields)
             {
                 LayersInCooldown++;
                 ProtLayers--;
@@ -178,7 +178,7 @@ public class SpaceshipMainframe : MonoBehaviour
                 }
                 else
                 {
-                    part.HP -= 2;
+                    part.HP -= damage;
                 }
             }
         }

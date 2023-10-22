@@ -31,7 +31,10 @@ public class BasicWeapon : MonoBehaviour
         {
             if (!isOnCooldown && target != null)
             {
-                enemy.TakeDamage(target);   
+                for (int i = 0; i < Rounds; i++)
+                {
+                    enemy.TakeDamage(target, CanGoThroughShield, damage);
+                }
                 StartCoroutine(Cooldown());
             }
         }
