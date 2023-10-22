@@ -33,6 +33,55 @@ public class EnergyStorage : MonoBehaviour
             }
         }
     }
+
+    public void POWERWeapon(BasicWeapon weapon)
+    {
+        if (weapon.MaxEnergy != 0 && weapon.UsingEnergy < weapon.MaxEnergy && FreePoints > 0)
+        {
+            weapon.UsingEnergy++;
+            foreach (GameObject g in weapon.powers)
+            {
+                if (!g.active)
+                {
+                    g.SetActive(true);
+                    break;
+                }
+            }
+            FreePoints--;
+            for (int i = powerVisualiser.Length - 1; i >= 0; i--)
+            {
+                if (powerVisualiser[i].active)
+                {
+                    powerVisualiser[i].SetActive(false);
+                    break;
+                }
+            }
+        }
+    }
+    public void UnpowerWeapon(BasicWeapon weapon)
+    {
+        if (weapon.UsingEnergy > 0)
+        {
+            weapon.UsingEnergy--;
+            foreach (GameObject g in powerVisualiser)
+            {
+                if (!g.active)
+                {
+                    g.SetActive(true);
+                    break;
+                }
+            }
+            FreePoints++;
+            for (int i = weapon.powers.Length - 1; i >= 0; i--)
+            {
+                if (weapon.powers[i].active)
+                {
+                    weapon.powers[i].SetActive(false);
+                    break;
+                }
+            }
+        }
+    }
     public void Unpower(BasicPart part)
     {
         if (part.UsingEnergy > 0)

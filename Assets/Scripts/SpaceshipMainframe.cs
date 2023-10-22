@@ -14,6 +14,9 @@ public class SpaceshipMainframe : MonoBehaviour
     public Image HullVis;
     [Header("Weaponary")]
     public BasicPart Weaponary;
+    public BasicWeapon LaserRifle;
+    public BasicWeapon RocketLauncher;
+    public BasicWeapon LaserBeam;
     [Header("Shield")]
     public BasicPart Shields;
     public Image ShieldVis;
@@ -28,6 +31,7 @@ public class SpaceshipMainframe : MonoBehaviour
     public int EvasionChance;
     public TextMeshProUGUI evasionVis;
 
+    #region Coroutines
     private IEnumerator Restore_Shield()
     {
         
@@ -36,7 +40,8 @@ public class SpaceshipMainframe : MonoBehaviour
         LayersInCooldown--;
         
     }
-
+    #endregion
+    #region SystemsUpdates
     private void UpdateHull()
     {
         Sum = 0;
@@ -78,6 +83,11 @@ public class SpaceshipMainframe : MonoBehaviour
         evasionVis.text = "evasion: "+EvasionChance*10f+"%";
     }
 
+    private void UpdateWeapons()
+    {
+
+    }
+    #endregion
     public void TakeDamage(BasicPart part)
     {
         if (Random.Range(1, 11) == EvasionChance)
