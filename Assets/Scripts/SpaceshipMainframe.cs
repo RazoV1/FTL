@@ -56,6 +56,10 @@ public class SpaceshipMainframe : MonoBehaviour
             ProtLayers = (Shields.UsingEnergy / 2) - LayersInCooldown;
             
         }
+        else
+        {
+            ProtLayers = ((Shields.UsingEnergy - 1) / 2) - LayersInCooldown;
+        }
         ShieldVis.fillAmount = ProtLayers / 4f;
 
     }
@@ -96,42 +100,67 @@ public class SpaceshipMainframe : MonoBehaviour
                     part.HP -= 2;
                     if (part.MaxEnergy >= 2)
                     {
+                        
                         part.MaxEnergy -= 2;
 
                         if (part.UsingEnergy >= 2)
                         {
-                            part.UsingEnergy -= 2;
-                            energy.FreePoints += 2;
-                            foreach (GameObject g in energy.powerVisualiser)
+                            if (part.UsingEnergy % 2 == 0)
                             {
-                                if (!g.active)
+                                part.UsingEnergy -= 2;
+                                energy.FreePoints += 2;
+                                foreach (GameObject g in energy.powerVisualiser)
                                 {
-                                    g.SetActive(true);
-                                    break;
+                                    if (!g.active)
+                                    {
+                                        g.SetActive(true);
+                                        break;
+                                    }
+                                }
+                                foreach (GameObject g in energy.powerVisualiser)
+                                {
+                                    if (!g.active)
+                                    {
+                                        g.SetActive(true);
+                                        break;
+                                    }
+                                }
+                                for (int i = part.powers.Length - 1; i >= 0; i--)
+                                {
+                                    if (part.powers[i].active)
+                                    {
+                                        part.powers[i].SetActive(false);
+                                        break;
+                                    }
+                                }
+                                for (int i = part.powers.Length - 1; i >= 0; i--)
+                                {
+                                    if (part.powers[i].active)
+                                    {
+                                        part.powers[i].SetActive(false);
+                                        break;
+                                    }
                                 }
                             }
-                            foreach (GameObject g in energy.powerVisualiser)
+                            else
                             {
-                                if (!g.active)
+                                part.UsingEnergy --;
+                                energy.FreePoints ++;
+                                foreach (GameObject g in energy.powerVisualiser)
                                 {
-                                    g.SetActive(true);
-                                    break;
+                                    if (!g.active)
+                                    {
+                                        g.SetActive(true);
+                                        break;
+                                    }
                                 }
-                            }
-                            for (int i = part.powers.Length - 1; i >= 0; i--)
-                            {
-                                if (part.powers[i].active)
+                                for (int i = part.powers.Length - 1; i >= 0; i--)
                                 {
-                                    part.powers[i].SetActive(false);
-                                    break;
-                                }
-                            }
-                            for (int i = part.powers.Length - 1; i >= 0; i--)
-                            {
-                                if (part.powers[i].active)
-                                {
-                                    part.powers[i].SetActive(false);
-                                    break;
+                                    if (part.powers[i].active)
+                                    {
+                                        part.powers[i].SetActive(false);
+                                        break;
+                                    }
                                 }
                             }
                         }
