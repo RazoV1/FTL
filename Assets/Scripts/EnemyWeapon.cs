@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicWeapon : MonoBehaviour
+public class EnemyWeapon : MonoBehaviour
 {
     public int coolDown;
     public int damage;
@@ -11,9 +11,9 @@ public class BasicWeapon : MonoBehaviour
     public int MaxEnergy;
     public int UsingEnergy;
     public BasicPart target;
-    public EnemyBehaviour enemy;
+    public SpaceshipMainframe playerSpaceship;
     public bool isOnCooldown;
-    [SerializeField] private Bullet bulletPrefab; 
+    [SerializeField] private EnemyBullet bulletPrefab; 
     [SerializeField] private Transform bulletSpawnPos;
     private float timeToWait = 0;
         
@@ -33,18 +33,19 @@ public class BasicWeapon : MonoBehaviour
     {
         if (UsingEnergy == MaxEnergy)
         {
-            if (!isOnCooldown && target != null)
+            if (!isOnCooldown)
             {
+                target = playerSpaceship.parts[Random.Range(0, playerSpaceship.parts.Length)];
                 for (int i = 0; i < Rounds; i++)
                 {
                     //enemy.TakeDamage(target, CanGoThroughShield, damage);
                     print(i);
-                    Bullet currentBullet = Instantiate(bulletPrefab);
+                    EnemyBullet currentBullet = Instantiate(bulletPrefab);
                     currentBullet.transform.position = bulletSpawnPos.position + new Vector3(0, i, 0);
                     currentBullet.damage = damage;
                     currentBullet.canGoThroughShields = CanGoThroughShield;
                     currentBullet.target = target;
-                    currentBullet.enemy = enemy;
+                    currentBullet.playerSpaceship = playerSpaceship;
                 }
                 StartCoroutine(Cooldown());
             }
