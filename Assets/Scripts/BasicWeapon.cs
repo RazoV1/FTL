@@ -11,7 +11,7 @@ public class BasicWeapon : MonoBehaviour
     public int MaxEnergy;
     public int UsingEnergy;
     public BasicPart target;
-    public SpaceshipMainframe enemy;
+    public EnemyBehaviour enemy;
     public bool isOnCooldown;
 
     public bool is_selecting;
