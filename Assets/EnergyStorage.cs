@@ -7,13 +7,54 @@ public class EnergyStorage : MonoBehaviour
 {
     public int MaxPoints;
     public int FreePoints;
+    public GameObject[] powerVisualiser;
     
     public void POWER(BasicPart part)
     {
         if (part.MaxEnergy != 0 && part.UsingEnergy < part.MaxEnergy && FreePoints > 0)
         {
             part.UsingEnergy++;
+            foreach(GameObject g in part.powers)
+            {
+                if (!g.active)
+                {
+                    g.SetActive(true);
+                    break;
+                }
+            }
             FreePoints--;
+            for (int i = powerVisualiser.Length - 1; i >= 0; i--)
+            {
+                if (powerVisualiser[i].active)
+                {
+                    powerVisualiser[i].SetActive(false);
+                    break;
+                }
+            }
+        }
+    }
+    public void Unpower(BasicPart part)
+    {
+        if (part.UsingEnergy > 0)
+        {
+            part.UsingEnergy--;
+            foreach (GameObject g in powerVisualiser)
+            {
+                if (!g.active)
+                {
+                    g.SetActive(true);
+                    break;
+                }
+            }
+            FreePoints++;
+            for (int i = part.powers.Length - 1; i >= 0; i--)
+            {
+                if (part.powers[i].active)
+                {
+                    part.powers[i].SetActive(false);
+                    break;
+                }
+            }
         }
     }
 }

@@ -8,4 +8,5 @@ public class BasicPart : MonoBehaviour
     public int MaxHP;
     public int MaxEnergy;
     public int UsingEnergy;
+    public GameObject[] powers;
 }

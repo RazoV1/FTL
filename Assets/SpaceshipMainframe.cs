@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class SpaceshipMainframe : MonoBehaviour
 {
@@ -9,10 +11,12 @@ public class SpaceshipMainframe : MonoBehaviour
     private int Sum;
     public BasicPart[] parts;
     public EnergyStorage energy;
+    public Image HullVis;
     [Header("Weaponary")]
     public BasicPart Weaponary;
     [Header("Shield")]
     public BasicPart Shields;
+    public Image ShieldVis;
     public int ProtLayers;
     private int LayersInCooldown;
     public bool Is_protected;
@@ -22,12 +26,15 @@ public class SpaceshipMainframe : MonoBehaviour
     [Header("Controll")]
     public BasicPart ControllRoom;
     public int EvasionChance;
+    public TextMeshProUGUI evasionVis;
 
     private IEnumerator Restore_Shield()
     {
+        
         yield return new WaitForSeconds(4);
         ProtLayers++;
         LayersInCooldown--;
+        
     }
 
     private void UpdateHull()
@@ -38,6 +45,7 @@ public class SpaceshipMainframe : MonoBehaviour
             Sum += part.HP;
         }
         Hull = Sum;
+        HullVis.fillAmount = Hull / 68f;
     }
     
     private void UpdateShields()
@@ -46,54 +54,96 @@ public class SpaceshipMainframe : MonoBehaviour
         if (Shields.UsingEnergy % 2 == 0 || Shields.HP<=0)
         {
             ProtLayers = (Shields.UsingEnergy / 2) - LayersInCooldown;
+            
         }
+        ShieldVis.fillAmount = ProtLayers / 4f;
+
     }
 
     private void UpdateEvasion()
     {
         EvasionChance = (ControllRoom.UsingEnergy + Engine.UsingEnergy);
+        if (EvasionChance == 0)
+        {
+            evasionVis.color = Color.red;
+        }
+        else
+        {
+            evasionVis.color = Color.green;
+        }
+        evasionVis.text = "evasion: "+EvasionChance*10f+"%";
     }
 
     public void TakeDamage(BasicPart part)
     {
-        if (EvasionChance > 0)
+        if (Random.Range(1, 11) == EvasionChance)
         {
-            if (Random.Range(0, 10) == EvasionChance)
+            Debug.Log("Evaded!");
+            return;
+        }
+        else
+        {
+            if (ProtLayers > 0)
             {
-                Debug.Log("Evaded!");
-                return;
+                LayersInCooldown++;
+                ProtLayers--;
+                StartCoroutine(Restore_Shield());
             }
             else
             {
-                if (ProtLayers > 0)
+                if (part.gameObject.name == "Shields")
                 {
-                    LayersInCooldown++;
-                    ProtLayers--;
-                    StartCoroutine(Restore_Shield());
-                }
-                else
-                {
-                    if (part.gameObject.name == "Shields")
+                    part.HP -= 2;
+                    if (part.MaxEnergy >= 2)
                     {
-                        part.HP -= 2;
-                        if (part.MaxEnergy >= 2)
-                        {
-                            part.MaxEnergy -= 2;
+                        part.MaxEnergy -= 2;
 
-                            if (part.UsingEnergy >= 2)
+                        if (part.UsingEnergy >= 2)
+                        {
+                            part.UsingEnergy -= 2;
+                            energy.FreePoints += 2;
+                            foreach (GameObject g in energy.powerVisualiser)
                             {
-                                part.UsingEnergy -= 2;
-                                energy.FreePoints += 2;
+                                if (!g.active)
+                                {
+                                    g.SetActive(true);
+                                    break;
+                                }
+                            }
+                            foreach (GameObject g in energy.powerVisualiser)
+                            {
+                                if (!g.active)
+                                {
+                                    g.SetActive(true);
+                                    break;
+                                }
+                            }
+                            for (int i = part.powers.Length - 1; i >= 0; i--)
+                            {
+                                if (part.powers[i].active)
+                                {
+                                    part.powers[i].SetActive(false);
+                                    break;
+                                }
+                            }
+                            for (int i = part.powers.Length - 1; i >= 0; i--)
+                            {
+                                if (part.powers[i].active)
+                                {
+                                    part.powers[i].SetActive(false);
+                                    break;
+                                }
                             }
                         }
                     }
-                    else
-                    {
-                        part.HP -= 2;
-                    }
+                }
+                else
+                {
+                    part.HP -= 2;
                 }
             }
         }
+        
     }
     public void Update()
     {
