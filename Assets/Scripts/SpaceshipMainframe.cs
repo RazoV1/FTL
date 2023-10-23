@@ -17,6 +17,7 @@ public class SpaceshipMainframe : MonoBehaviour
     public BasicWeapon LaserRifle;
     public BasicWeapon RocketLauncher;
     public BasicWeapon LaserBeam;
+    public GameObject miss;
     [Header("Shield")]
     public BasicPart Shields;
     public Image ShieldVis;
@@ -39,6 +40,12 @@ public class SpaceshipMainframe : MonoBehaviour
         ProtLayers++;
         LayersInCooldown--;
         
+    }
+    private IEnumerator ShowMiss(BasicPart part)
+    {
+        GameObject m = Instantiate(miss,part.gameObject.transform);
+        yield return new WaitForSeconds(1);
+        m.SetActive(false);
     }
     #endregion
     #region SystemsUpdates
@@ -93,6 +100,7 @@ public class SpaceshipMainframe : MonoBehaviour
         if (Random.Range(1, 11) == EvasionChance)
         {
             Debug.Log("Evaded!");
+            StartCoroutine(ShowMiss(part));
             return;
         }
         else
