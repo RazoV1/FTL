@@ -33,6 +33,17 @@ public class BasicWeapon : MonoBehaviour
     {
         if (UsingEnergy == MaxEnergy)
         {
+            if (is_selecting && Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                RaycastHit2D[] _hit;
+                Vector2 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Ray2D _ray = new Ray2D(Camera.main.transform.position, mouseWorldPosition);
+                //Получить RaycastHit2D
+                if (Physics2D.Raycast(Camera.main.transform.position, mouseWorldPosition, out _hit))
+                {
+                    //Установление target = _hit.transform.gameObject.name;
+                }
+            }
             if (!isOnCooldown && target != null)
             {
                 for (int i = 0; i < Rounds; i++)
