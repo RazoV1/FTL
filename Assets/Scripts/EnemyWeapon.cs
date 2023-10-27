@@ -39,7 +39,7 @@ public class EnemyWeapon : MonoBehaviour
                 for (int i = 0; i < Rounds; i++)
                 {
                     //enemy.TakeDamage(target, CanGoThroughShield, damage);
-                    print(i);
+                    //print(i);
                     EnemyBullet currentBullet = Instantiate(bulletPrefab);
                     currentBullet.transform.position = bulletSpawnPos.position + new Vector3(0, i, 0);
                     currentBullet.damage = damage;

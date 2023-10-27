@@ -35,13 +35,14 @@ public class BasicWeapon : MonoBehaviour
         {
             if (is_selecting && Input.GetKeyDown(KeyCode.Mouse0))
             {
-                RaycastHit2D[] _hit;
+                RaycastHit _hit;
                 Vector2 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Ray2D _ray = new Ray2D(Camera.main.transform.position, mouseWorldPosition);
+                Ray _ray = new Ray(mouseWorldPosition, Camera.main.transform.forward);
                 //Получить RaycastHit2D
-                if (Physics2D.Raycast(Camera.main.transform.position, mouseWorldPosition, out _hit))
+                Debug.DrawRay(mouseWorldPosition, Camera.main.transform.forward, Color.red,5);
+                if (Physics.Raycast(_ray,out _hit))
                 {
-                    //Установление target = _hit.transform.gameObject.name;
+                    TrySettingTarget(_hit.transform.gameObject.GetComponent<BasicPart>());
                 }
             }
             if (!isOnCooldown && target != null)
@@ -49,7 +50,7 @@ public class BasicWeapon : MonoBehaviour
                 for (int i = 0; i < Rounds; i++)
                 {
                     //enemy.TakeDamage(target, CanGoThroughShield, damage);
-                    print(i);
+                    //print(i);
                     Bullet currentBullet = Instantiate(bulletPrefab);
                     currentBullet.transform.position = bulletSpawnPos.position + new Vector3(0, i, 0);
                     currentBullet.damage = damage;
