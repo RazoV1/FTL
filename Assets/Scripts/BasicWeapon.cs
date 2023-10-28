@@ -13,6 +13,7 @@ public class BasicWeapon : MonoBehaviour
     public BasicPart target;
     public EnemyBehaviour enemy;
     public bool isOnCooldown;
+    public bool is_automatic = true;
     [SerializeField] private Bullet bulletPrefab; 
     [SerializeField] private Transform bulletSpawnPos;
     private float timeToWait = 0;
@@ -44,8 +45,14 @@ public class BasicWeapon : MonoBehaviour
                 {
                     TrySettingTarget(_hit.transform.gameObject.GetComponent<BasicPart>());
                 }
+                if (target != null && !is_automatic && !isOnCooldown)
+                {
+                    enemy.TakeDamage(target,CanGoThroughShield,1);
+                    target = null;
+                    StartCoroutine(Cooldown());
+                }
             }
-            if (!isOnCooldown && target != null)
+            if (!isOnCooldown && target != null && is_automatic)
             {
                 for (int i = 0; i < Rounds; i++)
                 {
